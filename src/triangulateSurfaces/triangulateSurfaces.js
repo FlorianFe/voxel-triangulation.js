@@ -91,7 +91,7 @@ const triangulateSurfaces = (contourList) =>
         return flatten(unflattedNormals);
     }));
 
-    let triangles = flatten(contourList.map(({ outerContour, innerContours }) => 
+    let indices = flatten(contourList.map(({ outerContour, innerContours }) => 
     {
         let result = [];
 
