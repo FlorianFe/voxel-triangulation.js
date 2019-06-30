@@ -22,3 +22,6 @@ converts voxels into a minimal set of triangles using [ndarray](https://github.c
   console.log(triangles); 
 
 ```
+## 📖 License
+
+(c) 2019 Florian Fechner. [MIT License](https://github.com/FlorianFe/voxel-triangulation/blob/master/LICENSE)
