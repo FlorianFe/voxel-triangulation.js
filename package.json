@@ -1,0 +1,30 @@
+{
+  "name": "voxel-triangulation",
+  "version": "1.0.0",
+  "description": "a library for subdividing voxels into triangles",
+  "main": "voxel-triangulation.js",
+  "scripts": {
+    "test": "ava",
+    "start": "node voxel-triangulation.js"
+  },
+  "keywords": [
+    "voxel",
+    "voxels",
+    "tesselation",
+    "triangles",
+    "triangulation",
+    "graphics"
+  ],
+  "author": "Florian Fechner",
+  "license": "MIT",
+  "dependencies": {
+    "cwise": "^1.0.10",
+    "flood-fill": "^0.1.1",
+    "libtess": "^1.2.2",
+    "ndarray": "^1.0.18",
+    "ndarray-ops": "^1.2.2",
+    "ramda": "^0.26.1",
+    "zeros": "^1.0.0"
+  },
+  "devDependencies": {}
+}
