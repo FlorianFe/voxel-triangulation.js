@@ -1,5 +1,4 @@
 
-const ndarray = require('ndarray');
 const zeros = require('zeros');
 
 const DIRECTION = require('../shared/DIRECTION/DIRECTION');
