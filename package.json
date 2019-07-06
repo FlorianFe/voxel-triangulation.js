@@ -6,6 +6,11 @@
   "scripts": {
     "start": "node voxel-triangulation.js"
   },
+  "repository": 
+  {
+    "type": "git",
+    "url": "https://github.com/florianfe/voxel-triangulation.git"
+  },
   "keywords": [
     "voxel",
     "voxels",
