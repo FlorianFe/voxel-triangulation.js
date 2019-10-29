@@ -1,8 +1,14 @@
 
 const libtess = require('libtess');
 const { flatten } = require('ramda');
+const { chunk } = require('underscore')
 
 const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR');
+
+const allEqual = (arr) => 
+{
+    return new Set(arr).size == 1;
+}
 
 const calculateCenteringTranslation = (contourList) => 
 {
@@ -124,7 +130,37 @@ const triangulateSurfaces = (contourList) =>
         return result;
     }));
 
-    return { vertices, normals, indices, voxelValues };
+    let unresizedVertices = flatten(chunk(flatten(contourList.map(({ outerContour, innerContours }) => 
+    {
+        let unflattedVertices = outerContour
+            .concat(flatten(innerContours))
+            .map(({ x, y, z }) => [ 
+                Math.round(x + tx + 0.5), 
+                Math.round(y + ty + 0.5), 
+                Math.round(z + tz + 0.5) 
+            ]);
+
+        return flatten(unflattedVertices);
+    })), 3));
+
+    let uvs = flatten(chunk(indices, 3).map((triangle) => 
+    {
+        let coordIndices = [
+            triangle[0] * 3 + 0, triangle[0] * 3 + 1, triangle[0] * 3 + 2,
+            triangle[1] * 3 + 0, triangle[1] * 3 + 1, triangle[1] * 3 + 2,
+            triangle[2] * 3 + 0, triangle[2] * 3 + 1, triangle[2] * 3 + 2
+        ];
+
+        let fc = coordIndices.map(index => unresizedVertices[index]);
+
+        if(fc[0] === fc[3] && fc[3] === fc[6]) return [fc[1], fc[2], fc[4], fc[5], fc[7], fc[8]];
+        if(fc[1] === fc[4] && fc[4] === fc[7]) return [fc[0], fc[2], fc[3], fc[5], fc[6], fc[8]];
+        if(fc[2] === fc[5] && fc[5] === fc[8]) return [fc[0], fc[1], fc[3], fc[4], fc[6], fc[7]];
+
+        throw new Error("UV calculation failed for some reason!")
+    }));
+
+    return { vertices, normals, indices, uvs, voxelValues };
 }
 
 module.exports = triangulateSurfaces;

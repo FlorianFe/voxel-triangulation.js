@@ -1,13 +1,13 @@
 {
   "name": "voxel-triangulation",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "a library for subdividing voxels into triangles",
   "main": "voxel-triangulation.js",
   "scripts": {
-    "start": "node voxel-triangulation.js"
+    "start": "node voxel-triangulation.js",
+    "test": "node test/test.js"
   },
-  "repository": 
-  {
+  "repository": {
     "type": "git",
     "url": "https://github.com/florianfe/voxel-triangulation.git"
   },
@@ -28,6 +28,7 @@
     "ndarray": "^1.0.18",
     "ndarray-ops": "^1.2.2",
     "ramda": "^0.26.1",
+    "underscore": "^1.9.1",
     "zeros": "^1.0.0"
   },
   "devDependencies": {}

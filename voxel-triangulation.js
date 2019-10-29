@@ -6,14 +6,14 @@ const triangulateSurfaces = require('./src/triangulateSurfaces/triangulateSurfac
 const calculateContourOfSurfaces = require('./src/calculateContourOfSurfaces/calculateContourOfSurfaces');
 
 // voxels : ndarray<Integer>
-// config : Object (not implemented yet)
-
-// TODO: implement configuration options
+// config : Object 
 
 const voxelTriangulation = (voxels, config) => 
 {
+    const exclude = config.exclude || [0];
+
     const expandedVoxelSpace = expandVoxelSpace(voxels);
-    const solidVoxelSpace = binarify(expandedVoxelSpace);
+    const solidVoxelSpace = binarify(expandedVoxelSpace, exclude);
     const extractedSurfaces = extractSurfaces(expandedVoxelSpace, solidVoxelSpace);
     const contourList = calculateContourOfSurfaces(extractedSurfaces);
     const triangles = triangulateSurfaces(contourList);
