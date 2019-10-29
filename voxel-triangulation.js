@@ -10,7 +10,8 @@ const calculateContourOfSurfaces = require('./src/calculateContourOfSurfaces/cal
 
 const voxelTriangulation = (voxels, config) => 
 {
-    const exclude = config.exclude || [0];
+
+    const exclude = (config === undefined) ? [0] : config.exclude || [0];
 
     const expandedVoxelSpace = expandVoxelSpace(voxels);
     const solidVoxelSpace = binarify(expandedVoxelSpace, exclude);
