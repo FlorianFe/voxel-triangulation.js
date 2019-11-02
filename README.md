@@ -1,4 +1,4 @@
-# voxel-triangulation
+# voxel-triangulation.js
 converts voxels into a set of triangles using [ndarray](https://github.com/scijs/ndarray) and [libtess.js](https://github.com/brendankenny/libtess.js/)
 
 ## 💾 Installation
