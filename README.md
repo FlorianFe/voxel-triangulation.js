@@ -12,7 +12,20 @@ converts voxels into a set of triangles using [ndarray](https://github.com/scijs
   const ndarray = require('ndarray');
   const triangulateVoxels = require('voxel-triangulation');
   
-  let values = [0, 1, 0, 0, 1, 2, 0, 1, 0]
+  let values = [
+    0, 1, 0, 
+    0, 1, 2, 
+    0, 1, 0,
+    
+    0, 1, 0, 
+    0, 0, 2, 
+    0, 1, 0,
+    
+    0, 1, 0, 
+    0, 0, 2, 
+    0, 0, 0,
+  ];
+   
   let voxels = new ndarray(values, [3, 3, 3]);
 
   // gives list of voxel values which will be excluded (handled as void)
