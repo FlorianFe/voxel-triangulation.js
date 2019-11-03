@@ -23,7 +23,7 @@ converts voxels into a set of triangles using [ndarray](https://github.com/scijs
     
     0, 1, 0, 
     0, 0, 2, 
-    0, 0, 0,
+    0, 0, 0
   ];
    
   let voxels = new ndarray(values, [3, 3, 3]);
