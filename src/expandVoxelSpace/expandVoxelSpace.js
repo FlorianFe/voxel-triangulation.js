@@ -9,7 +9,7 @@ const expandVoxelSpace = (voxelSpace) =>
     const sy = expandedShape[1] - 1;
     const sz = expandedShape[2] - 1;
 
-    let expandedVoxelSpace = zeros(expandedShape, 'uint32');
+    let expandedVoxelSpace = zeros(expandedShape, 'int32');
     
     for(let x=1; x<sx; ++x)
     for(let y=1; y<sy; ++y)
