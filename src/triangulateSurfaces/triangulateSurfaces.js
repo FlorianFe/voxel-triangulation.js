@@ -5,11 +5,6 @@ const { chunk } = require('underscore')
 
 const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR');
 
-const allEqual = (arr) => 
-{
-    return new Set(arr).size == 1;
-}
-
 const calculateCenteringTranslation = (contourList) => 
 {
     let vertices = contourList.map(({ outerContour, innerContours }) => 

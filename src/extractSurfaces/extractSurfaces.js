@@ -51,7 +51,7 @@ const extractSurface = (voxelSpace, solidSpace, markedSpace, position, direction
                 let nextPosition = arrayAdd(currentPosition, orthogonalDirectionVector);
                 let potentialOccludingPosition = arrayAdd(nextPosition, directionVector);
 
-                if(voxelSpace.get(...nextPosition) == voxelValue && solidSpace.get(...potentialOccludingPosition) == 0)
+                if(voxelSpace.get(...nextPosition) == voxelValue && solidSpace.get(...nextPosition) == 1 && solidSpace.get(...potentialOccludingPosition) == 0)
                 {
                     // clockwise | North - East - South - West
                     let nextCoordinates = arrayAdd(currentCoordinates, COMPASS_DIRECTION_VECTOR[index]);

@@ -2,11 +2,24 @@
 const ndarray = require('ndarray');
 const triangulateVoxels = require('../voxel-triangulation');
 
-let values = [0, 1, 0, 0, 1, 2, 0, 1, 0]
-let voxels = new ndarray(values, [3, 3, 3]);
+let values = [
+    0, 1, 0, 
+    0, 1, 2, 
+    0, 1, 0,
+
+    0, 1, 0, 
+    0, 0, 2, 
+    0, 1, 0,
+
+    0, 1, 0, 
+    0, 0, 2, 
+    0, 0, 0
+];
+
+let voxels = ndarray(values, [3, 3, 3]);
 
 // gives list of voxel values which will be handled as transparent
-let config = { exclude: [0] }; 
+let config = { exclude: [2] }; 
 
 let triangulation = triangulateVoxels(voxels, config);
 
