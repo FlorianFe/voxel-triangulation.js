@@ -22,9 +22,11 @@ const binarify = (voxelSpace, exclude) =>
     let shape = voxelSpace.shape;
     let result = zeros(shape, 'uint8');
 
-    for(let x=0; x<shape[0]; ++x)
-    for(let y=0; y<shape[1]; ++y)
-    for(let z=0; z<shape[2]; ++z)
+    const [sx, sy, sz] = shape;
+
+    for(let x=0; x<sx; ++x)
+    for(let y=0; y<sy; ++y)
+    for(let z=0; z<sz; ++z)
     {
         let value = voxelSpace.get(x, y, z);
 
