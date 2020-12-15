@@ -81,7 +81,7 @@ const triangulateSurfaces = (contourList) =>
             .map(() => voxelValue);
 
         return flatten(unflattedVertices);
-    }))
+    }));
 
     let normals = flatten(contourList.map(({ outerContour, innerContours, direction }) => 
     {

@@ -12,8 +12,6 @@ const voxelTriangulation = (voxels, config) =>
 {
     const exclude = (config === undefined) ? [0] : config.exclude || [0];
 
-    console.log(exclude);
-
     const expandedVoxelSpace = expandVoxelSpace(voxels);
     const solidVoxelSpace = binarify(expandedVoxelSpace, exclude);
     const extractedSurfaces = extractSurfaces(expandedVoxelSpace, solidVoxelSpace);
