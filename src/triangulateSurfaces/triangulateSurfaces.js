@@ -5,6 +5,37 @@ const { chunk } = require('underscore')
 
 const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR');
 
+const min = (arr) => 
+{
+    let minimum = Infinity
+
+    for(let i=0; i<arr.length; i++)
+    {
+        if(arr[i] < minimum)
+        {
+            minimum = arr[i]
+        }
+    }
+
+    return minimum
+}
+
+const max = (arr) => 
+{
+    let maximum = -Infinity
+
+    for(let i=0; i<arr.length; i++)
+    {
+        if(arr[i] > maximum)
+        {
+            maximum = arr[i]
+        }
+    }
+
+    return maximum
+}
+
+
 const calculateCenteringTranslation = (contourList) => 
 {
     let vertices = contourList.map(({ outerContour, innerContours }) => 
@@ -14,14 +45,14 @@ const calculateCenteringTranslation = (contourList) =>
             .map(({ x, y, z }) => [x, y, z]));
     });
 
-    let minX = Math.min(...vertices.map((arr) => arr[0]));
-    let maxX = Math.max(...vertices.map((arr) => arr[0]));
+    let minX = min(vertices.map((arr) => arr[0]));
+    let maxX = max(vertices.map((arr) => arr[0]));
 
-    let minY = Math.min(...vertices.map((arr) => arr[1]));
-    let maxY = Math.max(...vertices.map((arr) => arr[1]));
+    let minY = min(vertices.map((arr) => arr[1]));
+    let maxY = max(vertices.map((arr) => arr[1]));
     
-    let minZ = Math.min(...vertices.map((arr) => arr[2]));
-    let maxZ = Math.max(...vertices.map((arr) => arr[2]));
+    let minZ = min(vertices.map((arr) => arr[2]));
+    let maxZ = max(vertices.map((arr) => arr[2]));
 
     let tx = -((maxX - minX) / 2.0 + minX);
     let ty = -((maxY - minY) / 2.0 + minY);
@@ -30,7 +61,7 @@ const calculateCenteringTranslation = (contourList) =>
     return { tx, ty, tz };
 }
 
-const calculateNoralizingScale = (contourList) => 
+const calculateNormalizingScale = (contourList) => 
 {
     let vertices = contourList.map(({ outerContour, innerContours }) => 
     {
@@ -39,14 +70,14 @@ const calculateNoralizingScale = (contourList) =>
             .map(({ x, y, z }) => [x, y, z]));
     });
 
-    let minX = Math.min(...vertices.map((arr) => arr[0]));
-    let maxX = Math.max(...vertices.map((arr) => arr[0]));
+    let minX = min(vertices.map((arr) => arr[0]));
+    let maxX = max(vertices.map((arr) => arr[0]));
 
-    let minY = Math.min(...vertices.map((arr) => arr[1]));
-    let maxY = Math.max(...vertices.map((arr) => arr[1]));
+    let minY = min(vertices.map((arr) => arr[1]));
+    let maxY = max(vertices.map((arr) => arr[1]));
     
-    let minZ = Math.min(...vertices.map((arr) => arr[2]));
-    let maxZ = Math.max(...vertices.map((arr) => arr[2]));
+    let minZ = min(vertices.map((arr) => arr[2]));
+    let maxZ = max(vertices.map((arr) => arr[2]));
 
     let result = 1.0 / Math.max(maxX - minX, maxY - minY, maxZ - minZ);
 
@@ -63,7 +94,7 @@ const triangulateSurfaces = (contourList) =>
     tess.gluTessProperty(libtess.gluEnum.GLU_TESS_BOUNDARY_ONLY, false);
     
     let { tx, ty, tz} = calculateCenteringTranslation(contourList);
-    let scale = calculateNoralizingScale(contourList);
+    let scale = calculateNormalizingScale(contourList);
 
     let vertices = flatten(contourList.map(({ outerContour, innerContours }) => 
     {
@@ -122,8 +153,28 @@ const triangulateSurfaces = (contourList) =>
         tess.gluTessEndContour();
         tess.gluTessEndPolygon();
 
+        result = result.filter(index => Number.isInteger(index))
+
+        if(result.length % 3 !== 0)
+        {
+            console.log("not dividable by 3")
+            console.log(result.length)
+        }
+
+        if(!result.every(index => Number.isInteger(index)))
+        {
+            console.log("not every index seems to be an Integer")
+            console.log(outerContour, innerContours)
+        }
+
         return result;
     }));
+
+
+    if(indices.length % 3 !== 0)
+    {
+        console.log("indices are not dividable by 3")
+    }
 
     let unresizedVertices = flatten(chunk(flatten(contourList.map(({ outerContour, innerContours }) => 
     {
@@ -152,7 +203,8 @@ const triangulateSurfaces = (contourList) =>
         if(fc[1] === fc[4] && fc[4] === fc[7]) return [fc[0], fc[2], fc[3], fc[5], fc[6], fc[8]];
         if(fc[2] === fc[5] && fc[5] === fc[8]) return [fc[0], fc[1], fc[3], fc[4], fc[6], fc[7]];
 
-        throw new Error("UV calculation failed for some reason!")
+        // throw new Error("UV calculation failed for some reason!")
+        //console.log("uv calculation failed!")
     }));
 
     return { vertices, normals, indices, uvs, voxelValues };

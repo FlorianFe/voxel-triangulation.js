@@ -5,8 +5,8 @@
   "main": "voxel-triangulation.js",
   "scripts": {
     "start": "node voxel-triangulation.js",
-    "test": "ava",
-    "build": "rollup"
+    "test": "node test/test.js",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -24,15 +24,17 @@
   "license": "MIT",
   "dependencies": {
     "libtess": "^1.2.2",
-    "ndarray": "^1.0.18",
-    "ramda": "^0.26.1",
+    "ndarray": "^1.0.19",
+    "ramda": "^0.27.1",
     "zeros": "^1.0.0"
   },
   "devDependencies": {
     "@google/model-viewer": "^1.3.0",
     "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
     "ava": "^3.14.0",
     "rollup": "^2.35.1",
+    "three": "^0.123.0",
     "underscore": "^1.12.0"
   }
 }

@@ -3,7 +3,76 @@ const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR')
 
 const zeros = require('zeros');
 const ops = require("ndarray-ops");
-const floodFill = require('flood-fill');
+
+const arrayAdd = (a, b) => a.slice().map((val, index) => val + b[index]);
+
+const inRange = (pos, arr) => 
+{
+    return pos.every((coordinate, index) => coordinate >= 0 && coordinate < arr.shape[index])
+}
+
+const floodFill = (arr, pos, replacingValue) => 
+{
+    let result = cloneNDArray(arr)
+    let queue = [ pos ]
+
+    const valueToReplace = arr.get(...pos)
+
+    if(replacingValue === valueToReplace)
+    {
+        throw Error("Value to replace must be different from the replacing value")
+    }
+
+    
+    const directions = [
+        [-1, -1],
+        [0, -1],
+        [1, -1],
+
+        [-1, 0],
+        [1, 0],
+
+        [-1, 1],
+        [0, 1],
+        [1, 1]
+    ]
+
+    /*
+    const directions = [
+        [0, -1],
+        [-1, 0],
+        [1, 0],
+        [0, 1]
+    ]*/
+
+    let count = 0
+
+    while(queue.length > 0)
+    {
+        const currentPos = queue.shift()
+
+        result.set(...currentPos, replacingValue)
+
+        directions.forEach(direction =>  
+        {
+            const nextPos = arrayAdd(currentPos, direction)
+            const nextValue = result.get(...nextPos)
+
+            if(inRange(nextPos, arr) && nextValue === valueToReplace)
+            {
+                queue.push(nextPos)
+            }
+        })
+
+        count++
+        if(count > 100000)
+        {
+            console.log("countour: flood fill queue", queue.length, count)
+        }
+    }
+
+    return result
+}
 
 const contourWalk = require('./contourWalk/contourWalk');
 
@@ -19,14 +88,14 @@ const getCompassInnerContoursStartPositions = (surface) =>
     let result = [];
     let field = cloneNDArray(surface.field);
     
-    floodFill(field, 0, 0, 1);
+    field = floodFill(field, [0, 0], 1);
 
     for(let x=0; x<field.shape[0]; x++)
     for(let y=0; y<field.shape[1]; y++)
     {
         if(field.get(x, y) == 0)
         {
-            floodFill(field, x, y, 1);
+            field = floodFill(field, [x, y], 1);
             result.push([x, y]);
         }
     }

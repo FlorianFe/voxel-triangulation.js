@@ -4,8 +4,6 @@ const ops = require('ndarray-ops')
 const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR')
 
 const arrayAdd = (a, b) => a.slice().map((val, index) => val + b[index]);
-const arraySub = (a, b) => a.slice().map((val, index) => val - b[index]);
-const scaleVector = (factor, vec) => vec.map((component) => component * factor);
 
 const inRange = (pos, arr) => 
 {
@@ -86,7 +84,7 @@ const binarify = (voxelSpace, exclude) =>
             result.set(x, y, z, SOLID);
         }
     }
-    
+    /*
     result = floodFill(result, [0, 0, 0], NOT_SOLID_AND_ACCESSABLE)
 
     for(let x=0; x<sx; ++x)
@@ -104,6 +102,7 @@ const binarify = (voxelSpace, exclude) =>
             result.set(x, y, z, SOLID);
         }
     }
+    */
 
     return result;
 };

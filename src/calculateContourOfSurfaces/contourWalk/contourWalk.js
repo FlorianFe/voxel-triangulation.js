@@ -39,8 +39,8 @@ const OPTION_TABLE = [
     { when: [1, 0, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION.NORTH },
     { when: [0, 1, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION.SOUTH },
 
-    { when: [0, 1, 0, 1], necessary: false, cornerPos: COMPASS_DIRECTION.NORTH },
-    { when: [1, 0, 1, 0], necessary: false, cornerPos: COMPASS_DIRECTION.SOUTH }
+    { when: [0, 1, 0, 1], necessary: true, cornerPos: COMPASS_DIRECTION.SOUTH },
+    { when: [1, 0, 1, 0], necessary: true, cornerPos: COMPASS_DIRECTION.NORTH }
 ];
 
 const rotateClockwise = (direction, cornerPos) => 
@@ -69,6 +69,8 @@ const contourWalk = (surface, compassStartPosition, isAHole) =>
     let field = surface.field;
 
     let done = false;
+
+    let count = 0
 
     while(!done)
     {
@@ -100,6 +102,8 @@ const contourWalk = (surface, compassStartPosition, isAHole) =>
         if(option.necessary) contourVertices.push(cornerVertex);
         
         currentPosition = arrayAdd(currentPosition, COMPASS_DIRECTION_VECTOR[currentDirection]);
+
+        count++;
     } 
 
     return contourVertices;
