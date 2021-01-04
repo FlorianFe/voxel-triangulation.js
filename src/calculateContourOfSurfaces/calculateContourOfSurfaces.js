@@ -1,5 +1,6 @@
 
 const DIRECTION_VECTOR = require('../shared/DIRECTION_VECTOR/DIRECTION_VECTOR')
+const contourWalk = require('./contourWalk/contourWalk');
 
 const zeros = require('zeros');
 const ops = require("ndarray-ops");
@@ -10,6 +11,7 @@ const inRange = (pos, arr) =>
 {
     return pos.every((coordinate, index) => coordinate >= 0 && coordinate < arr.shape[index])
 }
+
 
 const floodFill = (arr, pos, replacingValue) => 
 {
@@ -22,7 +24,6 @@ const floodFill = (arr, pos, replacingValue) =>
     {
         throw Error("Value to replace must be different from the replacing value")
     }
-
     
     const directions = [
         [-1, -1],
@@ -37,44 +38,26 @@ const floodFill = (arr, pos, replacingValue) =>
         [1, 1]
     ]
 
-    /*
-    const directions = [
-        [0, -1],
-        [-1, 0],
-        [1, 0],
-        [0, 1]
-    ]*/
-
-    let count = 0
-
     while(queue.length > 0)
     {
         const currentPos = queue.shift()
+        const valueOfCurrentPos = result.get(...currentPos)
 
-        result.set(...currentPos, replacingValue)
-
-        directions.forEach(direction =>  
+        if(inRange(currentPos, arr) && valueOfCurrentPos === valueToReplace)
         {
-            const nextPos = arrayAdd(currentPos, direction)
-            const nextValue = result.get(...nextPos)
+            result.set(...currentPos, replacingValue)
 
-            if(inRange(nextPos, arr) && nextValue === valueToReplace)
+            directions.forEach(direction =>  
             {
+                const nextPos = arrayAdd(currentPos, direction)
+                
                 queue.push(nextPos)
-            }
-        })
-
-        count++
-        if(count > 100000)
-        {
-            console.log("countour: flood fill queue", queue.length, count)
+            })
         }
     }
 
     return result
 }
-
-const contourWalk = require('./contourWalk/contourWalk');
 
 const cloneNDArray = (toClone) => 
 { 
@@ -86,9 +69,8 @@ const cloneNDArray = (toClone) =>
 const getCompassInnerContoursStartPositions = (surface) => 
 {
     let result = [];
-    let field = cloneNDArray(surface.field);
     
-    field = floodFill(field, [0, 0], 1);
+    let field = floodFill(surface.field, [0, 0], 1);
 
     for(let x=0; x<field.shape[0]; x++)
     for(let y=0; y<field.shape[1]; y++)

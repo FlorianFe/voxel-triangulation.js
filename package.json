@@ -5,7 +5,7 @@
   "main": "voxel-triangulation.js",
   "scripts": {
     "start": "node voxel-triangulation.js",
-    "test": "node test/test.js",
+    "test": "ava",
     "build": "rollup -c"
   },
   "repository": {
