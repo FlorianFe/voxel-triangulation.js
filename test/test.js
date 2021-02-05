@@ -5,7 +5,6 @@ const { chunk } = require('underscore')
 const { product } = require('ramda')
 const { random, abs } = Math
 
-const checkIfTrianglesAreOverlapping = require('./checkIfTrianglesAreOverlapping')
 const triangulateVoxels = require('../voxel-triangulation');
 
 const uniform = (array) => array.every((element) => abs(element - array[0]) < 0.0001)
@@ -95,7 +94,6 @@ test('check if uv attribute is dividable by 2', t =>
     }))
 });
 
-
 test('check if triangles are sharing one (for normal tris) or two (for degenerated tris) coordinate values', t => 
 {
     triangulations.forEach((triangulation) => 
@@ -119,23 +117,4 @@ test('check if triangles are sharing one (for normal tris) or two (for degenerat
 
         console.log(triangulation.indices.length / 3)
     })    
-});
-
-test('there should not be any triangle intersections', t => 
-{
-    triangulations.forEach((triangulation) => 
-    {
-        const vertices = chunk(triangulation.vertices, 3)
-        const indices = chunk(triangulation.indices, 3)
-
-        const triangles = indices.map((face) => [ vertices[face[0]], vertices[face[1]], vertices[face[2]] ])
-
-        for(let i=0; i<triangles.length; i++)
-        for(let j=i+1; j<triangles.length; j++)
-        {
-            t.assert(!areTrianglesOverlapping(triangles[i], triangles[j]))
-        }
-
-        console.log(triangulation.indices.length / 3)
-    })    
-});
+})
