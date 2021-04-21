@@ -25,17 +25,19 @@ const floodFill = (arr, pos, replacingValue) =>
         throw Error("Value to replace must be different from the replacing value")
     }
     
+
+
     const directions = [
-        [-1, -1],
+        // [-1, -1],
         [0, -1],
-        [1, -1],
+        // [1, -1],
 
         [-1, 0],
         [1, 0],
 
-        [-1, 1],
+        // [-1, 1],
         [0, 1],
-        [1, 1]
+        // [1, 1]
     ]
 
     while(queue.length > 0)
@@ -75,7 +77,7 @@ const getCompassInnerContoursStartPositions = (surface) =>
     for(let x=0; x<field.shape[0]; x++)
     for(let y=0; y<field.shape[1]; y++)
     {
-        if(field.get(x, y) == 0)
+        if(field.get(x, y) === 0)
         {
             field = floodFill(field, [x, y], 1);
             result.push([x, y]);

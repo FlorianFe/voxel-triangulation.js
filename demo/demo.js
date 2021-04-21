@@ -32,8 +32,8 @@ const componentizedColores = [
 const loadVoxels = () => 
 {
     const AMOUNT_OF_VOXEL_VALUES = 3
-    const SHAPE = [75, 75, 75]
-    const values = new Array(product(SHAPE)).fill(0).map((_, index) => 1 + (index % AMOUNT_OF_VOXEL_VALUES))
+    const SHAPE = [25, 25, 25]
+    const values = new Array(product(SHAPE)).fill(0).map((_, index) => parseInt(random() * (AMOUNT_OF_VOXEL_VALUES + 1)))
 
     const voxels = ndarray(values, SHAPE);
     const config = { exclude: [0] }; 

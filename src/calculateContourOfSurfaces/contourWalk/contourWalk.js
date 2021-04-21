@@ -1,4 +1,6 @@
 
+var show = require('ndarray-show');
+
 const DIRECTION_VECTOR = require('../../shared/DIRECTION_VECTOR/DIRECTION_VECTOR')
 const ORTHOGONAL_DIRECTIONS = require('../../shared/ORTHOGONAL_DIRECTIONS/ORTHOGONAL_DIRECTIONS');
 const COMPASS_DIRECTION = require('../../shared/COMPASS_DIRECTION/COMPASS_DIRECTION')
@@ -39,8 +41,8 @@ const OPTION_TABLE = [
     { when: [1, 0, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION.NORTH },
     { when: [0, 1, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION.SOUTH },
 
-    { when: [0, 1, 0, 1], necessary: true, cornerPos: COMPASS_DIRECTION.SOUTH },
-    { when: [1, 0, 1, 0], necessary: true, cornerPos: COMPASS_DIRECTION.NORTH }
+    { when: [0, 1, 0, 1], necessary: true, cornerPos: COMPASS_DIRECTION.NORTH, danger: true },
+    { when: [1, 0, 1, 0], necessary: true, cornerPos: COMPASS_DIRECTION.SOUTH, danger: true }
 ];
 
 const rotateClockwise = (direction, cornerPos) => 
@@ -68,9 +70,7 @@ const contourWalk = (surface, compassStartPosition, isAHole) =>
     let currentPosition = arrayAdd(compassStartPosition, currentDirectionVector);
     let field = surface.field;
 
-    let done = false;
-
-    let count = 0
+    let done = false
 
     while(!done)
     {
@@ -102,10 +102,8 @@ const contourWalk = (surface, compassStartPosition, isAHole) =>
         if(option.necessary) contourVertices.push(cornerVertex);
         
         currentPosition = arrayAdd(currentPosition, COMPASS_DIRECTION_VECTOR[currentDirection]);
-
-        count++;
     } 
-
+    
     return contourVertices;
 };
 

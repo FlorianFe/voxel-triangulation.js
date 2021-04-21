@@ -90,7 +90,6 @@ const triangulateSurfaces = (contourList) =>
     let tess = new libtess.GluTesselator();
 
     tess.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, (data, vertices) => vertices.push(data));
-    tess.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, (coords) => [coords[0], coords[1], coords[2]]);
     tess.gluTessProperty(libtess.gluEnum.GLU_TESS_BOUNDARY_ONLY, false);
     
     let { tx, ty, tz} = calculateCenteringTranslation(contourList);

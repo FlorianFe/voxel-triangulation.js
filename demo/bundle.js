@@ -47384,6 +47384,10 @@ b"+i+"*=d\
 	        return "uint32"
 	      case "[object Uint8ClampedArray]":
 	        return "uint8_clamped"
+	      case "[object BigInt64Array]":
+	        return "bigint64"
+	      case "[object BigUint64Array]":
+	        return "biguint64"
 	    }
 	  }
 	  if(Array.isArray(data)) {
@@ -47403,6 +47407,8 @@ b"+i+"*=d\
 	  "uint32":[],
 	  "array":[],
 	  "uint8_clamped":[],
+	  "bigint64": [],
+	  "biguint64": [],
 	  "buffer":[],
 	  "generic":[]
 	}
@@ -59960,7 +59966,7 @@ b"+i+"*=d\
 	    {
 	        let currentCoordinates = stack2.pop();
 
-	        if(field.get(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1])) == 0)
+	        if(field.get(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1])) === 0)
 	        {
 	            field.set(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1]), 1);
 	        }
@@ -62383,7 +62389,6 @@ b"+i+"*=d\
 	    let tess = new libtess_min.GluTesselator();
 
 	    tess.gluTessCallback(libtess_min.gluEnum.GLU_TESS_VERTEX_DATA, (data, vertices) => vertices.push(data));
-	    tess.gluTessCallback(libtess_min.gluEnum.GLU_TESS_COMBINE, (coords) => [coords[0], coords[1], coords[2]]);
 	    tess.gluTessProperty(libtess_min.gluEnum.GLU_TESS_BOUNDARY_ONLY, false);
 	    
 	    let { tx, ty, tz} = calculateCenteringTranslation(contourList);
@@ -62549,8 +62554,8 @@ b"+i+"*=d\
 	    { when: [1, 0, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION_1.NORTH },
 	    { when: [0, 1, 1, 1], necessary: true, cornerPos: COMPASS_DIRECTION_1.SOUTH },
 
-	    { when: [0, 1, 0, 1], necessary: true, cornerPos: COMPASS_DIRECTION_1.SOUTH },
-	    { when: [1, 0, 1, 0], necessary: true, cornerPos: COMPASS_DIRECTION_1.NORTH }
+	    { when: [0, 1, 0, 1], necessary: true, cornerPos: COMPASS_DIRECTION_1.NORTH, danger: true },
+	    { when: [1, 0, 1, 0], necessary: true, cornerPos: COMPASS_DIRECTION_1.SOUTH, danger: true }
 	];
 
 	const rotateClockwise = (direction, cornerPos) => 
@@ -62611,7 +62616,7 @@ b"+i+"*=d\
 	        
 	        currentPosition = arrayAdd$1(currentPosition, COMPASS_DIRECTION_VECTOR_1[currentDirection]);
 	    } 
-
+	    
 	    return contourVertices;
 	};
 
@@ -62637,17 +62642,19 @@ b"+i+"*=d\
 	        throw Error("Value to replace must be different from the replacing value")
 	    }
 	    
+
+
 	    const directions = [
-	        [-1, -1],
+	        // [-1, -1],
 	        [0, -1],
-	        [1, -1],
+	        // [1, -1],
 
 	        [-1, 0],
 	        [1, 0],
 
-	        [-1, 1],
+	        // [-1, 1],
 	        [0, 1],
-	        [1, 1]
+	        // [1, 1]
 	    ];
 
 	    while(queue.length > 0)
@@ -62687,7 +62694,7 @@ b"+i+"*=d\
 	    for(let x=0; x<field.shape[0]; x++)
 	    for(let y=0; y<field.shape[1]; y++)
 	    {
-	        if(field.get(x, y) == 0)
+	        if(field.get(x, y) === 0)
 	        {
 	            field = floodFill(field, [x, y], 1);
 	            result.push([x, y]);
@@ -62751,6 +62758,8 @@ b"+i+"*=d\
 
 	var voxelTriangulation_1 = voxelTriangulation;
 
+	const { random: random$1 } = Math;
+
 	/*
 	const values = [
 	    0, 1, 0, 
@@ -62775,8 +62784,8 @@ b"+i+"*=d\
 	const loadVoxels = () => 
 	{
 	    const AMOUNT_OF_VOXEL_VALUES = 3;
-	    const SHAPE = [75, 75, 75];
-	    const values = new Array(product(SHAPE)).fill(0).map((_, index) => 1 + (index % AMOUNT_OF_VOXEL_VALUES));
+	    const SHAPE = [25, 25, 25];
+	    const values = new Array(product(SHAPE)).fill(0).map((_, index) => parseInt(random$1() * (AMOUNT_OF_VOXEL_VALUES + 1)));
 
 	    const voxels = ndarray(values, SHAPE);
 	    const config = { exclude: [0] }; 

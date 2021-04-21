@@ -67,7 +67,7 @@ const extractSurface = (voxelSpace, solidSpace, markedSpace, position, direction
     {
         let currentCoordinates = stack2.pop();
 
-        if(field.get(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1])) == 0)
+        if(field.get(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1])) === 0)
         {
             field.set(...arrayAdd(arraySub(currentCoordinates, minCoordinates), [1, 1]), 1);
         }
