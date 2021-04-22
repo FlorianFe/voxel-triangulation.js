@@ -1,3 +1,4 @@
 node_modules
 .vscode
 demo/bundle.js
+test/vox-models
