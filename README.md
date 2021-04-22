@@ -46,7 +46,7 @@ converts voxels into a set of triangles using [ndarray](https://github.com/scijs
 
 ## 👀 Demo
 
-You can see a live demo [here](https://florianfe.github.io/voxel-triangulation/demo/)
+You can see a live demo [here](https://florianfe.github.io/voxel-triangulation.js/demo/)
 
 
 ## 📖 License
