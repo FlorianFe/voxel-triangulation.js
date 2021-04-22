@@ -43,6 +43,12 @@ converts voxels into a set of triangles using [ndarray](https://github.com/scijs
   // voxelValues (1 entry for every face): [ value1, value2, ... ]
 
 ```
+
+## 👀 Demo
+
+You can see a live demo [here](https://florianfe.github.io/voxel-triangulation/demo/)
+
+
 ## 📖 License
 
 (c) 2019 Florian Fechner. [MIT License](https://github.com/FlorianFe/voxel-triangulation/blob/master/LICENSE)

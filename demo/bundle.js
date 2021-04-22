@@ -26742,6 +26742,125 @@
 	ParametricGeometry.prototype = Object.create( BufferGeometry.prototype );
 	ParametricGeometry.prototype.constructor = ParametricGeometry;
 
+	class WireframeGeometry extends BufferGeometry {
+
+		constructor( geometry ) {
+
+			super();
+			this.type = 'WireframeGeometry';
+
+			if ( geometry.isGeometry === true ) {
+
+				console.error( 'THREE.WireframeGeometry no longer supports THREE.Geometry. Use THREE.BufferGeometry instead.' );
+				return;
+
+			}
+
+			// buffer
+
+			const vertices = [];
+
+			// helper variables
+
+			const edge = [ 0, 0 ], edges = {};
+
+			const vertex = new Vector3();
+
+			if ( geometry.index !== null ) {
+
+				// indexed BufferGeometry
+
+				const position = geometry.attributes.position;
+				const indices = geometry.index;
+				let groups = geometry.groups;
+
+				if ( groups.length === 0 ) {
+
+					groups = [ { start: 0, count: indices.count, materialIndex: 0 } ];
+
+				}
+
+				// create a data structure that contains all eges without duplicates
+
+				for ( let o = 0, ol = groups.length; o < ol; ++ o ) {
+
+					const group = groups[ o ];
+
+					const start = group.start;
+					const count = group.count;
+
+					for ( let i = start, l = ( start + count ); i < l; i += 3 ) {
+
+						for ( let j = 0; j < 3; j ++ ) {
+
+							const edge1 = indices.getX( i + j );
+							const edge2 = indices.getX( i + ( j + 1 ) % 3 );
+							edge[ 0 ] = Math.min( edge1, edge2 ); // sorting prevents duplicates
+							edge[ 1 ] = Math.max( edge1, edge2 );
+
+							const key = edge[ 0 ] + ',' + edge[ 1 ];
+
+							if ( edges[ key ] === undefined ) {
+
+								edges[ key ] = { index1: edge[ 0 ], index2: edge[ 1 ] };
+
+							}
+
+						}
+
+					}
+
+				}
+
+				// generate vertices
+
+				for ( const key in edges ) {
+
+					const e = edges[ key ];
+
+					vertex.fromBufferAttribute( position, e.index1 );
+					vertices.push( vertex.x, vertex.y, vertex.z );
+
+					vertex.fromBufferAttribute( position, e.index2 );
+					vertices.push( vertex.x, vertex.y, vertex.z );
+
+				}
+
+			} else {
+
+				// non-indexed BufferGeometry
+
+				const position = geometry.attributes.position;
+
+				for ( let i = 0, l = ( position.count / 3 ); i < l; i ++ ) {
+
+					for ( let j = 0; j < 3; j ++ ) {
+
+						// three edges per triangle, an edge is represented as (index1, index2)
+						// e.g. the first triangle has the following edges: (0,1),(1,2),(2,0)
+
+						const index1 = 3 * i + j;
+						vertex.fromBufferAttribute( position, index1 );
+						vertices.push( vertex.x, vertex.y, vertex.z );
+
+						const index2 = 3 * i + ( ( j + 1 ) % 3 );
+						vertex.fromBufferAttribute( position, index2 );
+						vertices.push( vertex.x, vertex.y, vertex.z );
+
+					}
+
+				}
+
+			}
+
+			// build geometry
+
+			this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+		}
+
+	}
+
 	/**
 	 * parameters = {
 	 *  color: <hex>,
@@ -27027,6 +27146,174 @@
 		return this;
 
 	};
+
+	/**
+	 * parameters = {
+	 *  color: <hex>,
+	 *  specular: <hex>,
+	 *  shininess: <float>,
+	 *  opacity: <float>,
+	 *
+	 *  map: new THREE.Texture( <Image> ),
+	 *
+	 *  lightMap: new THREE.Texture( <Image> ),
+	 *  lightMapIntensity: <float>
+	 *
+	 *  aoMap: new THREE.Texture( <Image> ),
+	 *  aoMapIntensity: <float>
+	 *
+	 *  emissive: <hex>,
+	 *  emissiveIntensity: <float>
+	 *  emissiveMap: new THREE.Texture( <Image> ),
+	 *
+	 *  bumpMap: new THREE.Texture( <Image> ),
+	 *  bumpScale: <float>,
+	 *
+	 *  normalMap: new THREE.Texture( <Image> ),
+	 *  normalMapType: THREE.TangentSpaceNormalMap,
+	 *  normalScale: <Vector2>,
+	 *
+	 *  displacementMap: new THREE.Texture( <Image> ),
+	 *  displacementScale: <float>,
+	 *  displacementBias: <float>,
+	 *
+	 *  specularMap: new THREE.Texture( <Image> ),
+	 *
+	 *  alphaMap: new THREE.Texture( <Image> ),
+	 *
+	 *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
+	 *  combine: THREE.MultiplyOperation,
+	 *  reflectivity: <float>,
+	 *  refractionRatio: <float>,
+	 *
+	 *  wireframe: <boolean>,
+	 *  wireframeLinewidth: <float>,
+	 *
+	 *  skinning: <bool>,
+	 *  morphTargets: <bool>,
+	 *  morphNormals: <bool>,
+	 *
+	 *  flatShading: <bool>
+	 * }
+	 */
+
+	class MeshPhongMaterial extends Material {
+
+		constructor( parameters ) {
+
+			super();
+
+			this.type = 'MeshPhongMaterial';
+
+			this.color = new Color( 0xffffff ); // diffuse
+			this.specular = new Color( 0x111111 );
+			this.shininess = 30;
+
+			this.map = null;
+
+			this.lightMap = null;
+			this.lightMapIntensity = 1.0;
+
+			this.aoMap = null;
+			this.aoMapIntensity = 1.0;
+
+			this.emissive = new Color( 0x000000 );
+			this.emissiveIntensity = 1.0;
+			this.emissiveMap = null;
+
+			this.bumpMap = null;
+			this.bumpScale = 1;
+
+			this.normalMap = null;
+			this.normalMapType = TangentSpaceNormalMap;
+			this.normalScale = new Vector2( 1, 1 );
+
+			this.displacementMap = null;
+			this.displacementScale = 1;
+			this.displacementBias = 0;
+
+			this.specularMap = null;
+
+			this.alphaMap = null;
+
+			this.envMap = null;
+			this.combine = MultiplyOperation;
+			this.reflectivity = 1;
+			this.refractionRatio = 0.98;
+
+			this.wireframe = false;
+			this.wireframeLinewidth = 1;
+			this.wireframeLinecap = 'round';
+			this.wireframeLinejoin = 'round';
+
+			this.skinning = false;
+			this.morphTargets = false;
+			this.morphNormals = false;
+
+			this.flatShading = false;
+
+			this.setValues( parameters );
+
+		}
+
+		copy( source ) {
+
+			super.copy( source );
+
+			this.color.copy( source.color );
+			this.specular.copy( source.specular );
+			this.shininess = source.shininess;
+
+			this.map = source.map;
+
+			this.lightMap = source.lightMap;
+			this.lightMapIntensity = source.lightMapIntensity;
+
+			this.aoMap = source.aoMap;
+			this.aoMapIntensity = source.aoMapIntensity;
+
+			this.emissive.copy( source.emissive );
+			this.emissiveMap = source.emissiveMap;
+			this.emissiveIntensity = source.emissiveIntensity;
+
+			this.bumpMap = source.bumpMap;
+			this.bumpScale = source.bumpScale;
+
+			this.normalMap = source.normalMap;
+			this.normalMapType = source.normalMapType;
+			this.normalScale.copy( source.normalScale );
+
+			this.displacementMap = source.displacementMap;
+			this.displacementScale = source.displacementScale;
+			this.displacementBias = source.displacementBias;
+
+			this.specularMap = source.specularMap;
+
+			this.alphaMap = source.alphaMap;
+
+			this.envMap = source.envMap;
+			this.combine = source.combine;
+			this.reflectivity = source.reflectivity;
+			this.refractionRatio = source.refractionRatio;
+
+			this.wireframe = source.wireframe;
+			this.wireframeLinewidth = source.wireframeLinewidth;
+			this.wireframeLinecap = source.wireframeLinecap;
+			this.wireframeLinejoin = source.wireframeLinejoin;
+
+			this.skinning = source.skinning;
+			this.morphTargets = source.morphTargets;
+			this.morphNormals = source.morphNormals;
+
+			this.flatShading = source.flatShading;
+
+			return this;
+
+		}
+
+	}
+
+	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
 
 	/**
 	 * Abstract base class of interpolants over parametric samples.
@@ -49691,7 +49978,7 @@ b"+i+"*=d\
 	const loadVoxels = () => 
 	{
 	    const AMOUNT_OF_VOXEL_VALUES = 3;
-	    const SHAPE = [25, 25, 25];
+	    const SHAPE = [10, 10, 10];
 	    const values = new Array(product(SHAPE)).fill(0).map((_, index) => parseInt(random() * (AMOUNT_OF_VOXEL_VALUES + 1)));
 
 	    const voxels = ndarray(values, SHAPE);
@@ -49710,8 +49997,21 @@ b"+i+"*=d\
 	    geometry.setAttribute('color', new BufferAttribute(new Float32Array(flattenedColors), 3) );
 	    geometry.setIndex(new BufferAttribute(new Uint32Array(indices), 1));
 
-	    let material = new MeshStandardMaterial({ color: '#ffffff', roughness: 1.0, metalness: 0.0 });
-	    let mesh = new Mesh(geometry, material);
+	    // mesh
+	    const material = new MeshPhongMaterial( {
+	        color: 0xffffff,
+	        polygonOffset: true,
+	        polygonOffsetFactor: 1, // positive value pushes polygon further away
+	        polygonOffsetUnits: 1
+	    } );
+	    const mesh = new Mesh( geometry, material );
+
+	    // wireframe
+	    const geo = new WireframeGeometry( mesh.geometry ); // or WireframeGeometry
+	    const mat = new LineBasicMaterial( { color: 0x000000 } );
+	    const wireframe = new LineSegments( geo, mat );
+	    mesh.add( wireframe );
+
 	    let exporter = new GLTFExporter();
 
 	    exporter.parse(mesh, (json) => 

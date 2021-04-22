@@ -1,5 +1,7 @@
 
-import { BufferGeometry, BufferAttribute, MeshStandardMaterial, Mesh } from 'three'
+import { BufferGeometry, BufferAttribute, MeshStandardMaterial, 
+    EdgesGeometry, LineBasicMaterial, WireframeGeometry, 
+    LineSegments, Mesh, MeshPhongMaterial } from 'three'
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 import ndarray from 'ndarray'
@@ -32,7 +34,7 @@ const componentizedColores = [
 const loadVoxels = () => 
 {
     const AMOUNT_OF_VOXEL_VALUES = 3
-    const SHAPE = [25, 25, 25]
+    const SHAPE = [10, 10, 10]
     const values = new Array(product(SHAPE)).fill(0).map((_, index) => parseInt(random() * (AMOUNT_OF_VOXEL_VALUES + 1)))
 
     const voxels = ndarray(values, SHAPE);
@@ -51,8 +53,21 @@ const loadVoxels = () =>
     geometry.setAttribute('color', new BufferAttribute(new Float32Array(flattenedColors), 3) );
     geometry.setIndex(new BufferAttribute(new Uint32Array(indices), 1));
 
-    let material = new MeshStandardMaterial({ color: '#ffffff', roughness: 1.0, metalness: 0.0 });
-    let mesh = new Mesh(geometry, material);
+    // mesh
+    const material = new MeshPhongMaterial( {
+        color: 0xffffff,
+        polygonOffset: true,
+        polygonOffsetFactor: 1, // positive value pushes polygon further away
+        polygonOffsetUnits: 1
+    } );
+    const mesh = new Mesh( geometry, material );
+
+    // wireframe
+    const geo = new WireframeGeometry( mesh.geometry ); // or WireframeGeometry
+    const mat = new LineBasicMaterial( { color: 0x000000 } );
+    const wireframe = new LineSegments( geo, mat );
+    mesh.add( wireframe );
+
     let exporter = new GLTFExporter();
 
     exporter.parse(mesh, (json) => 
