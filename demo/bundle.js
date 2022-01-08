@@ -61549,6 +61549,14 @@ b"+i+"*=d\
 
 	    let { vertices, normals, indices, voxelValues } = voxelTriangulation_1(voxels, config);
 
+	    document.querySelector("#statistics").innerHTML = `
+        ${voxels.shape[0]}&times;${voxels.shape[1]}&times;${voxels.shape[2]} voxels
+        <br>
+        ${vertices.length} vertices
+        <br>
+        ${indices.length / 3} triangles
+    `;
+
 	    let normalizedColors = componentizedColores.map((color) => color.map((c) => c / 255.0));
 	    let alignedColors = [ [0, 0, 0], ...normalizedColors ];
 	    let flattenedColors = flatten$2(voxelValues.map((v) => alignedColors[v]));
